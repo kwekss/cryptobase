@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { AiFillLock, AiOutlineMail } from "react-icons/ai";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { signIn, UserAuth } from "../context/AuthContext";
 const Signin = () => {
+  const { signIn } = UserAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    setError("");
+    try {
+      await signIn(email, password);
+      navigate("/account");
+    } catch (e) {
+      setError(e.message);
+      console.log(e.message);
+    }
+  };
   return (
     <div>
       <div className="max-w-[400px] mx-auto min-h-[600px] px-4 py-20">
@@ -12,6 +28,7 @@ const Signin = () => {
             <label>Email</label>
             <div className="my-2 w-full relative rounded-2xl shadow-xl">
               <input
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 bg-primary border border-input rounded-2xl"
                 type="email"
               />
@@ -22,13 +39,18 @@ const Signin = () => {
             <label>Password</label>
             <div className="my-2 w-full relative rounded-2xl shadow-xl">
               <input
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-2 bg-primary border border-input rounded-2xl"
                 type="password"
               />
               <AiFillLock className="absolute right-2 top-3 tex-gray-400" />
             </div>
           </div>
-          <button className="w-full my-2 p-3 bg-button text-btnText rounded-2xl shadow-xl">
+          <button
+            type="button"
+            onClick={() => handleSubmit()}
+            className="w-full my-2 p-3 bg-button text-btnText rounded-2xl shadow-xl"
+          >
             {" "}
             Sign In
           </button>
